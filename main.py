@@ -195,7 +195,10 @@ def fetch_bms(event_code, date_code, region_code, region_slug,
                             params=params, timeout=15)
         if resp.status_code == 200:
             return resp.json()
-        print(f"  HTTP {resp.status_code}")
+        print(f"  HTTP {resp.status_code}  "
+              f"server={resp.headers.get('server', '?')}  "
+              f"cf-ray={resp.headers.get('cf-ray', '?')}")
+        print(f"  body: {resp.text[:300]!r}")
     except requests.RequestException as e:
         print(f"  Request failed: {e}")
     return None
