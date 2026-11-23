@@ -198,7 +198,7 @@ def fetch_bms(event_code, date_code, region_code, region_slug,
         print(f"  HTTP {resp.status_code}  "
               f"server={resp.headers.get('server', '?')}  "
               f"cf-ray={resp.headers.get('cf-ray', '?')}")
-        print(f"  body: {resp.text[:300]!r}")
+        print(f"  body: {resp.text!r}")
     except requests.RequestException as e:
         print(f"  Request failed: {e}")
     return None
