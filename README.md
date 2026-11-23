@@ -74,10 +74,10 @@ uv run main.py
 
 ## IP blocking
 
-BookMyShow's Cloudflare WAF has been seen hard-blocking requests from GitHub-hosted Actions runners ("Sorry, you have been blocked" — this is an IP-range block, not something fixable via headers/User-Agent). If every movie logs `HTTP 403 server=cloudflare` in the Actions log, you're hitting this. Two ways around it:
+BookMyShow serves India-only and its Cloudflare WAF hard-blocks non-Indian/datacenter IPs — including GitHub-hosted Actions runners ("Sorry, you have been blocked"; this is a known, widely-hit issue, not something fixable via headers/User-Agent). If every movie logs `HTTP 403 server=cloudflare` in the Actions log, you're hitting this. Two ways around it:
 
-- **Self-hosted runner.** Install a [GitHub Actions self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners) on a device you own that's reachable and stays on (home PC, NAS, Raspberry Pi). Requests then come from your residential IP. Change `runs-on: ubuntu-latest` to `runs-on: self-hosted` in the workflow.
-- **Proxy.** Set the `BMS_PROXY_URL` secret to an HTTP(S) proxy (`http://user:pass@host:port`) from a residential/mobile proxy provider. Cloudflare often also blocks known datacenter/proxy ranges, so a cheap datacenter proxy may not help — a genuinely residential one is more likely to work.
+- **Self-hosted runner.** Install a [GitHub Actions self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners) on a device you own in India that's reachable and stays on (home PC, NAS, Raspberry Pi). Requests then come from your residential IP. Change `runs-on: ubuntu-latest` to `runs-on: self-hosted` in the workflow.
+- **Proxy.** Set the `BMS_PROXY_URL` secret to an HTTP(S) proxy that exits through an **Indian** IP — e.g. [ScraperAPI](https://www.scraperapi.com) (has a free trial): `http://scraperapi.country_code=in:YOUR_API_KEY@proxy-server.scraperapi.com:8001`. A non-Indian residential proxy likely won't work, since this looks like geo-fencing on top of datacenter detection.
 
 ## Notifications
 

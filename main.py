@@ -15,6 +15,7 @@ from datetime import datetime
 from dataclasses import dataclass, field
 from urllib.parse import urlparse
 import requests
+import urllib3
 
 # ──────────────────────────────────────────────────────────────────────
 # CONFIGURATION — one or more movies, edit these or set via env vars
@@ -53,9 +54,16 @@ MOVIES = [
 
 # Optional: route BMS API requests through an HTTP(S) proxy, e.g. when
 # running on GitHub-hosted runners whose IP range BMS/Cloudflare blocks.
-# Format: http://user:pass@host:port  (same URL used for http and https).
+# BMS only serves India-based traffic, so the proxy must exit through an
+# Indian IP — e.g. ScraperAPI: http://scraperapi.country_code=in:KEY@proxy-server.scraperapi.com:8001
+# Proxy services like this terminate TLS themselves, so cert verification
+# against the real upstream (bookmyshow.com) has to be skipped when one
+# is configured.
 BMS_PROXY_URL = os.getenv("BMS_PROXY_URL", "").strip()
 PROXIES = {"http": BMS_PROXY_URL, "https": BMS_PROXY_URL} if BMS_PROXY_URL else None
+VERIFY_SSL = not BMS_PROXY_URL
+if BMS_PROXY_URL:
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 RESEND_TO_EMAIL = os.getenv("RESEND_TO_EMAIL", "")
@@ -197,8 +205,8 @@ def fetch_bms(event_code, date_code, region_code, region_slug,
         "lat": lat, "lon": lon,
     }
     try:
-        resp = requests.get(API_URL, headers=headers,
-                            params=params, proxies=PROXIES, timeout=15)
+        resp = requests.get(API_URL, headers=headers, params=params,
+                            proxies=PROXIES, verify=VERIFY_SSL, timeout=15)
         if resp.status_code == 200:
             return resp.json()
         print(f"  HTTP {resp.status_code}  "
