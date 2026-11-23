@@ -9,7 +9,7 @@ on:
 jobs:
   check-tickets:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 5
     permissions:
       contents: write
 
@@ -34,7 +34,6 @@ jobs:
           BMS_DATES: ${{ vars.BMS_DATES }}
           BMS_THEATRE: ${{ vars.BMS_THEATRE }}
           BMS_TIME: ${{ vars.BMS_TIME }}
-          BMS_PROXY_URL: ${{ secrets.BMS_PROXY_URL }}
         run: uv run main.py
 
       - name: Commit updated state
