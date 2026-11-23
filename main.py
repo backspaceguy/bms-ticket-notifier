@@ -62,6 +62,9 @@ MOVIES = [
 BMS_PROXY_URL = os.getenv("BMS_PROXY_URL", "").strip()
 PROXIES = {"http": BMS_PROXY_URL, "https": BMS_PROXY_URL} if BMS_PROXY_URL else None
 VERIFY_SSL = not BMS_PROXY_URL
+# Proxy services like ScraperAPI do their own bot-mitigation/retries behind
+# the scenes, which is much slower than a direct request.
+FETCH_TIMEOUT = 70 if BMS_PROXY_URL else 15
 if BMS_PROXY_URL:
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -206,7 +209,8 @@ def fetch_bms(event_code, date_code, region_code, region_slug,
     }
     try:
         resp = requests.get(API_URL, headers=headers, params=params,
-                            proxies=PROXIES, verify=VERIFY_SSL, timeout=15)
+                            proxies=PROXIES, verify=VERIFY_SSL,
+                            timeout=FETCH_TIMEOUT)
         if resp.status_code == 200:
             return resp.json()
         print(f"  HTTP {resp.status_code}  "
