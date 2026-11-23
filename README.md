@@ -6,9 +6,9 @@ Runs every n minutes via GitHub Actions. (You can set it via cron jobs, tho GH A
 
 ## How It Works
 
-1. Fetches showtimes from the BookMyShow API for a given movie URL
-2. Compares results with the previous check (stored in `bms_state.json`)
-3. Sends an HTML email via [Resend](https://resend.com) if anything changed (new shows, dates opening, availability updates)
+1. Fetches showtimes from the BookMyShow API for one or more movie URLs
+2. Compares results with the previous check (stored per-movie in `bms_state.json`)
+3. Sends an HTML email via [Resend](https://resend.com) for each movie with changes (new shows, dates opening, availability updates)
 
 ## Setup
 
@@ -30,10 +30,20 @@ Go to **Settings → Secrets and variables → Actions → Variables** and add:
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `BMS_URL` | BookMyShow ticket page URL | `https://in.bookmyshow.com/movies/chennai/.../ET00123456` |
+| `BMS_URL` | BookMyShow ticket page URL(s). List multiple movies one per line (or `;`-separated) to watch several at once. | `https://in.bookmyshow.com/movies/chennai/.../ET00123456` |
 | `BMS_DATES` | Dates to monitor (YYYYMMDD, comma-separated). Leave empty to auto-detect from URL. | `20260318,20260319` |
 | `BMS_THEATRE` | Filter by theatre name (substring match, comma-separated) | `PVR,IMAX` |
 | `BMS_TIME` | Filter by time period (comma-separated) | `evening,night` |
+
+**Watching multiple movies:** put one URL per line in `BMS_URL`. `BMS_DATES` / `BMS_THEATRE` / `BMS_TIME` each apply to *every* movie if given a single value (as above), or can be set per-movie by giving one value per line, in the same order as `BMS_URL`.
+
+```
+BMS_URL:
+https://in.bookmyshow.com/movies/chennai/movie-one/ET00111111
+https://in.bookmyshow.com/movies/chennai/movie-two/ET00222222
+
+BMS_THEATRE: IMAX   # applies to both movies above
+```
 
 **Time periods:** `morning` (6–12), `afternoon` (12–16), `evening` (16–19), `night` (19–24)
 

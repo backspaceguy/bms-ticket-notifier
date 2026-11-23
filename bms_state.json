@@ -1,12 +1,78 @@
 {
-  "shows": {},
-  "dates": {
-    "20260903": "BOOKABLE",
-    "20260904": "NOT_OPEN",
-    "20260905": "NOT_OPEN",
-    "20260906": "NOT_OPEN",
-    "20260907": "NOT_OPEN",
-    "20260908": "NOT_OPEN",
-    "20260909": "NOT_OPEN"
+  "movies": {
+    "ET00526290": {
+      "shows": {
+        "INPR|69746|20261216|ELITE": {
+          "venue": "INOX: LUXE Phoenix Market City, Velachery",
+          "time": "07:25 PM",
+          "date": "20261216",
+          "cat": "ELITE",
+          "price": "508.34",
+          "status": "1"
+        },
+        "INPR|69747|20261216|ELITE": {
+          "venue": "INOX: LUXE Phoenix Market City, Velachery",
+          "time": "10:45 PM",
+          "date": "20261216",
+          "cat": "ELITE",
+          "price": "508.34",
+          "status": "1"
+        },
+        "PVPZ|41457|20261216|ELITE": {
+          "venue": "PVR: Palazzo, The Nexus Vijaya Mall",
+          "time": "07:45 PM",
+          "date": "20261216",
+          "cat": "ELITE",
+          "price": "508.34",
+          "status": "1"
+        },
+        "PVPZ|41458|20261216|ELITE": {
+          "venue": "PVR: Palazzo, The Nexus Vijaya Mall",
+          "time": "11:00 PM",
+          "date": "20261216",
+          "cat": "ELITE",
+          "price": "508.34",
+          "status": "1"
+        }
+      },
+      "dates": {
+        "20261216": "BOOKABLE",
+        "20261217": "AVAILABLE",
+        "20261218": "AVAILABLE",
+        "20261219": "AVAILABLE",
+        "20261220": "AVAILABLE",
+        "20261221": "NOT_OPEN",
+        "20261222": "NOT_OPEN"
+      }
+    },
+    "ET00526353": {
+      "shows": {
+        "INPR|69809|20261124|ELITE": {
+          "venue": "INOX: LUXE Phoenix Market City, Velachery",
+          "time": "04:40 PM",
+          "date": "20261124",
+          "cat": "ELITE",
+          "price": "508.34",
+          "status": "2"
+        },
+        "PVPZ|41550|20261124|ELITE": {
+          "venue": "PVR: Palazzo, The Nexus Vijaya Mall",
+          "time": "01:00 PM",
+          "date": "20261124",
+          "cat": "ELITE",
+          "price": "508.34",
+          "status": "2"
+        }
+      },
+      "dates": {
+        "20261124": "BOOKABLE",
+        "20261125": "AVAILABLE",
+        "20261126": "NOT_OPEN",
+        "20261127": "NOT_OPEN",
+        "20261128": "NOT_OPEN",
+        "20261129": "NOT_OPEN",
+        "20261130": "NOT_OPEN"
+      }
+    }
   }
 }
