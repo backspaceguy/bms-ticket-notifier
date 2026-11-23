@@ -51,6 +51,12 @@ MOVIES = [
     )
 ]
 
+# Optional: route BMS API requests through an HTTP(S) proxy, e.g. when
+# running on GitHub-hosted runners whose IP range BMS/Cloudflare blocks.
+# Format: http://user:pass@host:port  (same URL used for http and https).
+BMS_PROXY_URL = os.getenv("BMS_PROXY_URL", "").strip()
+PROXIES = {"http": BMS_PROXY_URL, "https": BMS_PROXY_URL} if BMS_PROXY_URL else None
+
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 RESEND_TO_EMAIL = os.getenv("RESEND_TO_EMAIL", "")
 RESEND_FROM_EMAIL = os.getenv("RESEND_FROM_EMAIL", "aviiciii@resend.dev")
@@ -192,7 +198,7 @@ def fetch_bms(event_code, date_code, region_code, region_slug,
     }
     try:
         resp = requests.get(API_URL, headers=headers,
-                            params=params, timeout=15)
+                            params=params, proxies=PROXIES, timeout=15)
         if resp.status_code == 200:
             return resp.json()
         print(f"  HTTP {resp.status_code}  "

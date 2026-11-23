@@ -23,6 +23,7 @@ Go to **Settings → Secrets and variables → Actions** and add:
 | `RESEND_API_KEY` | API key from [resend.com](https://resend.com) |
 | `RESEND_FROM_EMAIL` | Email address to send notifications (use your own domain email or anything@resend.dev) |
 | `RESEND_TO_EMAIL` | Email address to receive notifications |
+| `BMS_PROXY_URL` | Optional. HTTP(S) proxy URL (`http://user:pass@host:port`) for the BMS API request. See [IP blocking](#ip-blocking) below. |
 
 ### 3. Set GitHub Variables
 
@@ -32,7 +33,7 @@ Go to **Settings → Secrets and variables → Actions → Variables** and add:
 |----------|-------------|---------|
 | `BMS_URL` | BookMyShow ticket page URL(s). List multiple movies one per line (or `;`-separated) to watch several at once. | `https://in.bookmyshow.com/movies/chennai/.../ET00123456` |
 | `BMS_DATES` | Dates to monitor (YYYYMMDD, comma-separated). Leave empty to auto-detect from URL. | `20260318,20260319` |
-| `BMS_THEATRE` | Filter by theatre name (substring match, comma-separated) | `PVR,IMAX` |
+| `BMS_THEATRE` | Filter by theatre name (substring match, comma-separated) | `PVR,Sathyam` |
 | `BMS_TIME` | Filter by time period (comma-separated) | `evening,night` |
 
 **Watching multiple movies:** put one URL per line in `BMS_URL`. `BMS_DATES` / `BMS_THEATRE` / `BMS_TIME` each apply to *every* movie if given a single value (as above), or can be set per-movie by giving one value per line, in the same order as `BMS_URL`.
@@ -42,10 +43,12 @@ BMS_URL:
 https://in.bookmyshow.com/movies/chennai/movie-one/ET00111111
 https://in.bookmyshow.com/movies/chennai/movie-two/ET00222222
 
-BMS_THEATRE: IMAX   # applies to both movies above
+BMS_THEATRE: PVR   # applies to both movies above
 ```
 
 **Time periods:** `morning` (6–12), `afternoon` (12–16), `evening` (16–19), `night` (19–24)
+
+**Premium formats (IMAX, 4DX, etc.) are not a theatre filter.** BookMyShow gives each format its own ticket page and event code — `BMS_THEATRE=IMAX` will *not* find IMAX shows, since "IMAX" doesn't appear in the venue name. Instead, open the movie on BookMyShow, pick the IMAX (or 4DX/Screen X/...) format from the language/format selector, and use *that* page's URL/event code in `BMS_URL`. You'll recognize it by a URL slug ending in e.g. `-imax-2d`.
 
 ### 4. Trigger the workflow
 
@@ -68,6 +71,13 @@ export RESEND_TO_EMAIL="python@resend.dev"
 
 uv run main.py
 ```
+
+## IP blocking
+
+BookMyShow's Cloudflare WAF has been seen hard-blocking requests from GitHub-hosted Actions runners ("Sorry, you have been blocked" — this is an IP-range block, not something fixable via headers/User-Agent). If every movie logs `HTTP 403 server=cloudflare` in the Actions log, you're hitting this. Two ways around it:
+
+- **Self-hosted runner.** Install a [GitHub Actions self-hosted runner](https://docs.github.com/en/actions/hosting-your-own-runners) on a device you own that's reachable and stays on (home PC, NAS, Raspberry Pi). Requests then come from your residential IP. Change `runs-on: ubuntu-latest` to `runs-on: self-hosted` in the workflow.
+- **Proxy.** Set the `BMS_PROXY_URL` secret to an HTTP(S) proxy (`http://user:pass@host:port`) from a residential/mobile proxy provider. Cloudflare often also blocks known datacenter/proxy ranges, so a cheap datacenter proxy may not help — a genuinely residential one is more likely to work.
 
 ## Notifications
 
